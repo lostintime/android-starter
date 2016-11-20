@@ -16,6 +16,8 @@
 #   public *;
 #}
 
+# Find more snippets here: https://github.com/krschultz/android-proguard-snippets/tree/master/libraries
+
 -keepattributes Signature
 -keepattributes Annotation
 
