@@ -105,3 +105,17 @@ Make a copy of `app/fabric.sample.properties` at `app/fabric.properties`
 Then on your [settings page](https://fabric.io/settings/organizations) - select organization
  you want to add your app to and from page header - get `API Key` and `Build secret` and
  update config values in `app/fabric.properties`.
+
+
+### Building the app
+
+To build the app and install to attached device run: `./gradlew installPreviewDebug`.
+
+By default Crashlytics is enable only for `release` configuration, 
+so Fabric app will be registered only when you run release build first time. 
+
+
+## Next Steps
+
+Now we're ready to do our custom changes. Start with renaming 
+base package (from `com.example.starter`).
