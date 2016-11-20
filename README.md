@@ -1,13 +1,27 @@
 AndroidStarter
 ==============
 
-Android Application bootstrap sample using Kotlin.
+Android Application bootstrap sample using [Kotlin](https://kotlinlang.org/).
 
 
 ## What's Inside
 
-`WIP`
+Sample application with:
 
+  * Kotlin and kapt (annotation processing) configuration
+  * [Fabric](https://fabric.io) configuration (Crashlytics)
+  * Basic [Dagger2](https://google.github.io/dagger/) DI structure implementation 
+  * Sample [Retrofit](https://github.com/square/retrofit) API definition
+  * [Moshi](https://github.com/square/moshi) and [Moshi-JsonApi](https://github.com/kamikat/moshi-jsonapi) configuration
+  * Sample Identification service (generating persistent UUID for every install)
+  * Sample tests using [kotlintest](https://github.com/kotlintest/kotlintest)
+  * And few other useful dependencies: 
+    * [RxJava2](https://github.com/ReactiveX/RxJava)
+    * [RxAndroid2](https://github.com/ReactiveX/RxAndroid)
+    * [OkHttp](https://github.com/square/okhttp)
+    * [Tape](https://github.com/square/tape)
+    * [Joda Time](http://www.joda.org/joda-time/)
+  
 
 ## Getting Starting
 

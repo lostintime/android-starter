@@ -147,10 +147,10 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-moshi:2.1.0'
-    // sqlbrite requires rxjava 1.x
+    // sqlbrite requires rxjava 1.x, check this for updates: https://github.com/square/sqlbrite/issues/136
     // compile 'com.squareup.sqlbrite:sqlbrite:0.7.0'
     compile 'com.squareup.moshi:moshi:1.2.0'
-    compile 'com.squareup:tape:1.2.3' // Remove if not used
+    compile 'com.squareup:tape:1.2.3'
 
     compile 'moe.banana:moshi-jsonapi:2.2.0'
 
