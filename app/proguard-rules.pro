@@ -15,3 +15,33 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Find more snippets here: https://github.com/krschultz/android-proguard-snippets/tree/master/libraries
+
+-keepattributes Signature
+-keepattributes Annotation
+
+# OkHTTP3
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+# Joda Time
+-dontwarn org.joda.convert.**
+-dontwarn org.joda.time.**
+-keep class org.joda.time.** { *; }
+-keep interface org.joda.time.** { *;}
+
+# Retrofit2
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
+
+# App rules
+-keep class com.example.starter.api.** { *; }
+-keep interface com.example.starter.api.** { *;}
