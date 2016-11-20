@@ -1,0 +1,165 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
+
+/**
+ * Initialize keystore properties
+ */
+def keystoreProperties = new Properties()
+
+if (!System.getenv()["CI"]) { // CI=true is exported by Greenhouse
+    keystoreProperties.load(new FileInputStream(rootProject.file("keystore.properties")))
+}
+
+/**
+ * Fabric properties
+ */
+def fabricProperties = new Properties()
+fabricProperties.load(new FileInputStream(rootProject.file("app/fabric.properties")))
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "23.0.2"
+
+    signingConfigs {
+        debugSigning {
+            if (System.getenv()["CI"]) { // CI=true is exported by Greenhouse
+                storeFile file(System.getenv()["GH_DEBUG_KEYSTORE_PATH"])
+                storePassword System.getenv()["GH_DEBUG_KEYSTORE_PASSWORD"]
+                keyAlias System.getenv()["GH_DEBUG_KEY_ALIAS"]
+                keyPassword System.getenv()["GH_DEBUG_KEY_PASSWORD"]
+            } else {
+                storeFile file(keystoreProperties['debugStoreFile'])
+                storePassword keystoreProperties['debugStorePassword']
+                keyAlias keystoreProperties['debugKeyAlias']
+                keyPassword keystoreProperties['debugkeyPassword']
+            }
+        }
+
+        releaseSigning {
+            if (System.getenv()["CI"]) { // CI=true is exported by Greenhouse
+                storeFile file(System.getenv()["GH_RELEASE_KEYSTORE_PATH"])
+                storePassword System.getenv()["GH_RELEASE_KEYSTORE_PASSWORD"]
+                keyAlias System.getenv()["GH_KEY_RELEASE_ALIAS"]
+                keyPassword System.getenv()["GH_KEY_RELEASE_PASSWORD"]
+            } else {
+                storeFile file(keystoreProperties['releaseStoreFile'])
+                storePassword keystoreProperties['releaseStorePassword']
+                keyAlias keystoreProperties['releaseKeyAlias']
+                keyPassword keystoreProperties['releaseKeyPassword']
+            }
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.example.starter"
+        manifestPlaceholders = [targetApplicationId: applicationId]
+        minSdkVersion 14
+        targetSdkVersion 24
+        versionCode System.getenv().BUILD_NUMBER?.toInteger() ?: 1
+        versionName "0.1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ext.enableCrashlytics = false
+        // App Configuration Options
+        buildConfigField 'String', 'API_BASE_URI', '"https://example.com/v1/"'
+        manifestPlaceholders = [
+                fabricApiKey: fabricProperties['apiKey']
+        ]
+    }
+
+    productFlavors {
+        preview {
+            applicationId "com.example.starter.preview"
+            manifestPlaceholders = [targetApplicationId: applicationId]
+            signingConfig signingConfigs.debugSigning
+        }
+        production {
+            signingConfig signingConfigs.releaseSigning
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            productFlavors.preview.signingConfig signingConfigs.debugSigning
+            productFlavors.production.signingConfig signingConfigs.releaseSigning
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ext.enableCrashlytics = false
+            buildConfigField 'Boolean', 'ENABLE_CRASHLYTICS', 'false'
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ext.enableCrashlytics = true
+            buildConfigField 'Boolean', 'ENABLE_CRASHLYTICS', 'true'
+            productFlavors.preview.signingConfig signingConfigs.debugSigning
+            productFlavors.production.signingConfig signingConfigs.releaseSigning
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+kapt {
+    generateStubs = true
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+        transitive = true;
+    }
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    androidTestCompile('com.android.support.test.espresso:espresso-intents:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile "com.nhaarman:mockito-kotlin:0.8.0"
+    testCompile 'io.kotlintest:kotlintest:1.3.5'
+    testCompile 'com.squareup.okhttp3:mockwebserver:3.4.1'
+
+    // Dagger 2
+    compile 'com.google.dagger:dagger:2.4'
+    kapt 'com.google.dagger:dagger-compiler:2.4'
+    kaptTest 'com.google.dagger:dagger-compiler:2.4'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    // RxJava
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // Network
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-moshi:2.1.0'
+    // sqlbrite requires rxjava 1.x
+    // compile 'com.squareup.sqlbrite:sqlbrite:0.7.0'
+    compile 'com.squareup.moshi:moshi:1.2.0'
+    compile 'com.squareup:tape:1.2.3' // Remove if not used
+
+    compile 'moe.banana:moshi-jsonapi:2.2.0'
+
+    compile 'joda-time:joda-time:2.9.4'
+
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://jitpack.io" }
+}
